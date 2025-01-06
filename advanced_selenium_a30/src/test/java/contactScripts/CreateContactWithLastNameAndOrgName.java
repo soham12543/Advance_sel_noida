@@ -1,4 +1,4 @@
-package org_test;
+package contactScripts;
 
 import java.awt.AWTException;
 import java.awt.Robot;
