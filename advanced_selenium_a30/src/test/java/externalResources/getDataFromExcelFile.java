@@ -35,6 +35,7 @@ public class getDataFromExcelFile {
 		String orgname=cell.getStringCellValue();
 		System.out.println(orgname);
 		
+		
 
 	}
 
