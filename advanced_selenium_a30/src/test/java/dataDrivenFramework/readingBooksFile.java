@@ -14,7 +14,7 @@ public class readingBooksFile {
 
 	public static void main(String[] args) throws EncryptedDocumentException, IOException 
 	{
-		FileInputStream file=new FileInputStream("C:\\Users\\Asus\\eclipse-workspace\\TestNG Workspace\\advanced_selenium_a30\\src\\test\\resources\\BooksFile.xlsx");
+		FileInputStream file=new FileInputStream("C:\\Users\\Asus\\git\\Advance_selenium\\advanced_selenium_a30\\src\\test\\resources\\BooksFile.xlsx");
         Workbook wb=WorkbookFactory.create(file);
         Sheet sh=wb.getSheet("Sheet1");
         int numrows=sh.getLastRowNum();
@@ -30,9 +30,7 @@ public class readingBooksFile {
         		System.out.print(c.toString()+"             ");
         	}
         	System.out.println();
-        }
-        
-        		
+        }        		
 	}
 
 }

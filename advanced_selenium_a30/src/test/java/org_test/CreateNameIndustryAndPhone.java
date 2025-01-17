@@ -18,6 +18,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import generic_Utility.FileUtility;
 import generic_Utility.WebDriverUtility;
+import objectRepo.CreateOrganizationPage;
+import objectRepo.LoginPage;
 
 public class CreateNameIndustryAndPhone {
 
@@ -27,16 +29,12 @@ public class CreateNameIndustryAndPhone {
 		driver.manage().window().maximize();
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
 		WebDriverWait mywait=new WebDriverWait(driver,Duration.ofSeconds(10));*/
-		
-		
-		
-		
-		/*//Step1) Load the Properties File
+			
+		/*
 		FileInputStream file=new FileInputStream("C:\\Users\\Asus\\eclipse-workspace\\TestNG Workspace\\advanced_selenium_a30\\src\\main\\resources\\commonData.properties");
 		Properties oBJ=new Properties();
 		oBJ.load(file);
-		
-		//Step2) Get all the values
+
 		
 		String URL=oBJ.getProperty("url");
 		String BRO=oBJ.getProperty("bro");
@@ -51,19 +49,20 @@ public class CreateNameIndustryAndPhone {
 		oBJ.store(fos, "Added phoneno to property file");*/
 		/*String PHNO=oBJ.getProperty("phone");*/
 		
-		
-
+		//Step1) Load commonData through properties file
 		FileUtility file=new FileUtility();
 		String URL=file.getDataFromPropertiesFile("url");
 		String BRO=file.getDataFromPropertiesFile("bro");
 		String UN=file.getDataFromPropertiesFile("un");
 		String PASS=file.getDataFromPropertiesFile("pwd");
 		String PHNO=file.getDataFromPropertiesFile("phone");
-		String IND=file.getDataFromPropertiesFile("industry");
 		
+		//Step2) Load test script data from excel file
+		String IND=file.getDataFromExcelFileWithoutRandomNo("org", 1, 1);
 		String ORG=file.getDataFromExcelFile("org", 1, 0);
 		
 		
+		//Step3) Launch the browser according to properties file
 		WebDriver driver = null;
 
 		if (BRO.equals("chrome")) {
@@ -76,36 +75,59 @@ public class CreateNameIndustryAndPhone {
 			driver = new ChromeDriver();
 		}
 		
+		//Step4) Use WebDriver utility object to access the WebDriver methods
 		WebDriverUtility wdlib=new WebDriverUtility(driver);
 		wdlib.maximize(driver);
 		wdlib.waitForElement(driver);
 			
-	
-		//Step3) Login with Username and Password
 		
+		//Step5) Use POM classes of LoginPage and ContactPage to get the required locators	
+		LoginPage lp=new LoginPage(driver);
+		CreateOrganizationPage op=new CreateOrganizationPage(driver);
+	
+		
+		
+		//Step6) Launch the browser
 		driver.get(URL);
-		driver.findElement(By.name("user_name")).sendKeys(UN);
+		/*driver.findElement(By.name("user_name")).sendKeys(UN);
 		driver.findElement(By.name("user_password")).sendKeys(PASS);
-		driver.findElement(By.id("submitButton")).click();
+		driver.findElement(By.id("submitButton")).click();*/
+		
+		
+		//Step7) Login to the Vtiger website	
+		lp.getUsername().sendKeys(UN);
+		lp.getPassword().sendKeys(PASS);
+		lp.getSubmitButton().click();
 
 
 		//Step4) Click on Origanizations-->Select the add button
-		driver.findElement(By.xpath("//td[@class='tabUnSelected']//a[text()='Organizations']")).click();
-		driver.findElement(By.xpath("//img[@alt='Create Organization...']")).click();
+		/*driver.findElement(By.xpath("//td[@class='tabUnSelected']//a[text()='Organizations']")).click();
+		driver.findElement(By.xpath("//img[@alt='Create Organization...']")).click();*/
+		
+		//Step 8) Click on Origanizations-->Select the add button
+		op.getOrganizationsButton().click();
+		op.getCreateOrgButton().click();
 
 		
-		//Step5) Enter the organization name-->Select the given industry from dopdown--->Enter phone no--->Click on Save button
-		driver.findElement(By.name("accountname")).sendKeys(ORG);
+		
+		/*driver.findElement(By.name("accountname")).sendKeys(ORG);
 		WebElement element=driver.findElement(By.name("industry"));
 		Select dropdown=new Select(element);
 		dropdown.selectByValue(IND);
 		driver.findElement(By.xpath("//input[@title='Save [Alt+S]']")).click();	
-		driver.findElement(By.id("phone")).sendKeys(PHNO);
+		driver.findElement(By.id("phone")).sendKeys(PHNO);*/
+		
+		//Step9) Enter the organization name-->Select the given industry from dopdown--->Enter phone no--->Click on Save button
+		op.getOrgNameField().sendKeys(ORG);
+		WebElement element=op.getIndustry();
+		Select dropdown=new Select(element);
+		dropdown.selectByValue(IND);
+		op.getSaveButton().click();
+		op.getPhoneNo().sendKeys(PHNO);
 		
 		
-		//Step6) Verify the entered Organization, Industry name and Phone no entered.
 		
-		String actOrgName=driver.findElement(By.id("dtlview_Organization Name")).getText();
+		/*String actOrgName=driver.findElement(By.id("dtlview_Organization Name")).getText();
 		String actIndustryName=driver.findElement(By.id("dtlview_Industry")).getText();
 		String actPhoneNumber=driver.findElement(By.id("dtlview_Phone")).getText();
 		System.out.println("Selected Organization Name: "+actOrgName);
@@ -116,7 +138,23 @@ public class CreateNameIndustryAndPhone {
 		if(actIndustryName.contains(IND))
 			System.out.println("Industry Name Verifiied!!");
 		if(actPhoneNumber.contains(PHNO))
+			System.out.println("Phone Number Verified!!");*/
+		
+		
+		//Step10) Verify the entered Organization, Industry name and Phone no entered.
+		String actOrgName=op.getActOrgName().getText();
+		String actIndustryName=op.getActIndustryName().getText();
+		String actPhoneNumber=op.getActPhoneNo().getText();
+		System.out.println("Selected Organization Name: "+actOrgName);
+		System.out.println("Selected Industry Name: "+actIndustryName);
+		System.out.println("Selected Phone No: "+actPhoneNumber);
+		if(actOrgName.contains(ORG))
+			System.out.println("Organization Name Verified!!");
+		if(actIndustryName.contains(IND))
+			System.out.println("Industry Name Verifiied!!");
+		if(actPhoneNumber.contains(PHNO))
 			System.out.println("Phone Number Verified!!");
+		
 
 	}
 
